@@ -34,15 +34,41 @@ void add_to_history(char *unused){}
 #include <editline/history.h>
 
 #endif
+int calculus(char *op, int valx, int valy)
+{
+	switch(op[0])
+	{
+		case '+':
+			return valx + valy;
+		case '-':
+			return valx - valy;
+		case '*':
+			return valx * valy;
+		case '/':
+			return valx / valy;
+		default:
+			printf("This operature is not exist in this lisp\n");
 
+	}
+	return 0;
+}
 // Evaluation of user input
 int evaluation(mpc_ast_t* t)
 {
-  int result = 0;
-  int pos = 1;
-  int count = 0;
+  int x = 0;
+  if(strstr(t->tag, "number")){return  atoi(t->contents);}
+
   char* op = t->children[1]->contents;
-  switch(op[0])
+  
+  x = evaluation(t->children[2]);
+
+  for (int i = 3; i < t->children_num - 1; i++)
+  {
+	  x = calculus(op, x , evaluation(t->children[i]));
+  }
+   
+//-----------------------------------------------------------------
+ /* switch(op[0])
   {
     case '+':
       for(int i = 2; i < t->children_num-1; i++)
@@ -128,8 +154,8 @@ int evaluation(mpc_ast_t* t)
     default:
       printf("I can't do this operation yet!!\n");
   }
-
-  return result;
+*/
+  return x;
 }
 // Interactive prompt
 int main(int argc, char **argv)
