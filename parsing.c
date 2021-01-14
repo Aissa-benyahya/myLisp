@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "mpc/mpc.c"
 #ifdef _WIN32
 
 static char buffer[2048];
@@ -30,18 +30,18 @@ void add_to_history(char *unused){}
 #include <editline/history.h>
 
 #endif
-int calculus(char *op, int valx, int valy)
+int calculus(char *op, int lval, int rval)
 {
 	switch(op[0])
 	{
 		case '+':
-			return valx + valy;
+			return lval + rval;
 		case '-':
-			return valx - valy;
+			return lval - rval;
 		case '*':
-			return valx * valy;
+			return lval * rval;
 		case '/':
-			return valx / valy;
+			return lval / rval;
 		default:
 			printf("This operature is not exist in this lisp \n");
 
