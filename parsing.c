@@ -47,7 +47,7 @@ int calculus(char *op, int valx, int valy)
 		case '/':
 			return valx / valy;
 		default:
-			printf("This operature is not exist in this lisp\n");
+			printf("This operature is not exist in this lisp \n");
 
 	}
 	return 0;
