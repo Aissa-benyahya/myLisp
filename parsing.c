@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 
         // Output our prompt
         char *input = readline("lisp> ");
-        if(!strcmp(input, "clear"))
+        if(strcmp(input, "clear") == 0)
         {
           system("clear");
           input = readline("lisp> ");
