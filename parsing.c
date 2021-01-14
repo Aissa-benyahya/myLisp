@@ -2,14 +2,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <editline/readline.h>
-//#include <editline/history.h>
-#include "mpc/mpc.h"
-
-static char buffer[2048];
 
 #ifdef _WIN32
 
+static char buffer[2048];
 #include <string.h>
 // Artificial readline
 char *readline(char *prompt)
@@ -67,94 +63,6 @@ int evaluation(mpc_ast_t* t)
 	  x = calculus(op, x , evaluation(t->children[i]));
   }
    
-//-----------------------------------------------------------------
- /* switch(op[0])
-  {
-    case '+':
-      for(int i = 2; i < t->children_num-1; i++)
-      {
-        if(!strcmp(t->children[i]->tag, "expr|>"))
-        {
-          int res = evaluation(t->children[i]);
-          result += res;
-        }else{
-          result += atoi(t->children[i]->contents);
-        }
-      }
-      break;
-    case '-':
-      for(int i = 2; i < t->children_num-1; i++)
-      {
-        if(!strcmp(t->children[i]->tag, "expr|>"))
-        {
-          printf("hi inside strcmp\n");
-          int res = evaluation(t->children[i]);
-          if(count == 0)
-          {
-            result = res;
-            count++;
-          }
-          else
-          {
-            result -= res;
-          }
-        }else{
-          if(count == 0){
-            result = atoi(t->children[i]->contents);
-            count++;
-          }
-          else
-            result -= atoi(t->children[i]->contents);
-        }
-      }
-      break;
-    case '*':  
-      for(int i = 2; i < t->children_num-1; i++)
-      {
-        if(!strcmp(t->children[i]->tag, "expr|>"))
-        {
-          printf("hi inside strcmp\n");
-          int res = evaluation(t->children[i]);
-          pos *= res;
-        }else{
-          pos *= atoi(t->children[i]->contents);
-        }
-      }
-      result = pos;
-      break;
-    case '/':
-      for(int i = 2; i < t->children_num-1; i++)
-      {
-        if(!strcmp(t->children[i]->tag, "expr|>"))
-        {
-          printf("hi inside strcmp\n");
-          int res = evaluation(t->children[i]);
-          if(count == 0)
-          {
-            result = res;
-            count++;
-          }
-          else
-          {
-            result /= res;
-          }
-        }else{
-          if(count == 0)
-          {
-            result = atoi(t->children[i]->contents);
-            count++;
-          }
-          else
-          {
-            result /= atoi(t->children[i]->contents); 
-          }
-        }
-      }
-      break;
-    default:
-      printf("I can't do this operation yet!!\n");
-  }
-*/
   return x;
 }
 // Interactive prompt
