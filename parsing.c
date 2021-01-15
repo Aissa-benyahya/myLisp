@@ -29,30 +29,106 @@ void add_to_history(char *unused){}
 #include <editline/readline.h>
 #include <editline/history.h>
 
-#endif
-int calculus(char *op, int lval, int rval)
+enum {INVALID_OP, VALID_OP};
+enum {DIV_ZERO, INVALID_NUM};
+
+typedef struct Eval
 {
+    int type;
+    long num;
+    int error;
+}ev;
+
+ev *eval_num(long x)
+{
+    ev *v = (ev *)malloc(sizeof(ev));
+    v->type = VALID_OP;
+    v->num = x;
+    return v;
+}
+ev *eval_error(int x)
+{
+      ev *v = (ev *)malloc(sizeof(ev));
+      v->type = INVALID_OP;
+      v->error = x;
+      return v;
+}
+
+#endif
+ev *error_check(char *var)
+{
+    ev *v = (ev *)malloc(sizeof(ev));
+    errno = 0;
+    long x = strtol(var, NULL, 10);
+    if(errno != ERANGE)
+    { 
+        return eval_num(x);
+    }
+    else{
+        return eval_error(INVALID_NUM);
+    }
+return v;
+}
+void liprint(ev *pr)
+{
+    switch(pr->type)
+    {   
+        case 1:
+            printf("%ld\n", pr->num);
+            break;
+        case 0:
+            switch(pr->error)
+            {
+                case 0:
+                    printf("error: Division by zero!\n");
+                    break;
+                case 1:
+                     printf("error: Invalid number!\n");
+                     break;
+                default:
+                     printf("Uknown error appeared\n");
+                     break;
+            }
+            break;
+        default:
+            printf("none of the previous\n");
+            break;
+    }
+}
+ev *calculus(char *op, ev *lval, ev *rval)
+{
+  if(lval->type == INVALID_OP) return lval;
+  if(rval->type == INVALID_OP) return rval;
 	switch(op[0])
 	{
 		case '+':
-			return lval + rval;
+            return eval_num(lval->num+rval->num);
 		case '-':
-			return lval - rval;
+            return eval_num(lval->num-rval->num);
 		case '*':
-			return lval * rval;
+            return eval_num(lval->num*rval->num);
 		case '/':
-			return lval / rval;
+            if(rval->num == 0){
+              return eval_error(DIV_ZERO);
+            }
+            else
+              return eval_num(lval->num / rval->num);
 		default:
-			printf("This operature is not exist in this lisp \n");
+			      printf("This operature is not exist in this lisp \n");
+            break;
 
 	}
-	return 0;
+	return eval_error(INVALID_OP);
 }
 // Evaluation of user input
-int evaluation(mpc_ast_t* t)
+ev *evaluation(mpc_ast_t* t)
 {
-  int x = 0;
-  if(strstr(t->tag, "number")){return  atoi(t->contents);}
+  ev *x = (ev *)malloc(sizeof(ev));
+  if(strstr(t->tag, "number"))
+  {  
+    x = error_check(t->contents);
+    return x;
+  }
 
   char* op = t->children[1]->contents;
   
@@ -104,7 +180,7 @@ int main(int argc, char **argv)
 
         // Attempt to parse user input
         mpc_result_t r;
-        int response = 0;
+        ev *response = (ev *)malloc(sizeof(ev));
         if(mpc_parse("<stdin>", input, Lispy, &r))
         {
           /* On Success print the AST */ 
@@ -113,12 +189,12 @@ int main(int argc, char **argv)
           //Evaluation of the user input
           response = evaluation(node);
           printf("--------------------------------\n");
-          printf("result = %d\n",response);
+          liprint(response);
           printf("--------------------------------\n");
 
           // A parsing tree 
-          mpc_ast_print(r.output);
-          mpc_ast_delete(r.output);
+          //mpc_ast_print(r.output);
+          //mpc_ast_delete(r.output);
         }else{
           /* Otherwise print the error */
           mpc_err_print(r.error);
